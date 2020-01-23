@@ -1,0 +1,113 @@
+## Bonus 1 :
+
+● Lister les articles (avec leur catégorie) indiquant « Sport » dans le titre
+-
+SELECT `Titre`, `Auteur_Pseudo`, article_has_category.Category_Nom 
+FROM `article` 
+INNER JOIN `article_has_category` ON article_has_category.Article_Titre = article.Titre 
+WHERE `Titre` LIKE '%Sport%'
+
+
+● Lister les articles (avec leur catégorie) indiquant « Sport » dans le titre et «
+Biathlon » dans le texte
+
+-
+SELECT `Titre`, `Texte`, `Date`, `importance`, `FinDate`, `Auteur_Pseudo`, article_has_category.Category_Nom 
+FROM `article` 
+INNER JOIN article_has_category
+ON article_has_category.Article_Titre = `Titre`
+WHERE `Titre` LIKE '%Sport%' AND `Texte` LIKE '%Biathlon%'
+
+
+● Lister les articles ayant « Bravo » dans le commentaire
+
+-
+SELECT * FROM `article` 
+INNER JOIN commnetaire
+ON `Titre` = commnetaire.Article_Titre
+WHERE  commnetaire.Text LIKE '%Bravo%'
+
+
+● Lister les articles publiés aujourd’hui et ayant « Bravo » dans le commentaire,
+compléter l’affichage avec les 20 premiers caractères du commentaire
+
+-
+SELECT `Titre`,`Texte`,article.Date, SUBSTR(commnetaire.Text, 1, 20) 
+FROM `article` INNER JOIN commnetaire ON `Titre` = commnetaire.Article_Titre 
+WHERE commnetaire.Text LIKE '%Bravo%' AND `FinDate` >= '2020-01-23'
+
+
+● Lister les articles rédigés par « Matéo » avec un commentaire ajouté par « Matéo»
+-
+SELECT article.Titre , `Texte`, article.Auteur_Pseudo , commnetaire.Text, commnetaire.Auteur_Pseudo, commnetaire.Date 
+FROM `article` 
+INNER JOIN commnetaire
+on article.Titre = commnetaire.Article_Titre
+WHERE article.Auteur_Pseudo= 'Nemo' AND commnetaire.Auteur_Pseudo = 'Nemo'
+
+● Lister les articles avec un commentaire de plus de 20 caractères, compléter
+l’affichage avec les commentaires
+-
+SELECT article.Titre, `Texte`, `importance`,  article.Auteur_Pseudo, commnetaire.Text, commnetaire.Auteur_Pseudo 
+FROM `article`
+INNER JOIN commnetaire
+ON article.Titre = commnetaire.Article_Titre
+WHERE Length(commnetaire.Text) >= 20
+
+
+## Bonus 2 :
+
+● Lister les articles ayant un commentaire dans les 2 heures suivant leur
+publication
+
+-
+SELECT article.Titre, `Texte`, `importance`, article.Date , commnetaire.Text, commnetaire.Date
+FROM `article`
+INNER JOIN commnetaire
+ON article.Titre = commnetaire.Article_Titre
+WHERE TIMEDIFF(commnetaire.Date, article.Date ) < '02:00'
+
+
+● Lister le titre des articles et le nombre de commentaires de chacun d’entre eux
+-
+SELECT article.Titre, COUNT(commnetaire.Article_Titre) 
+FROM `article`
+INNER JOIN commnetaire
+ON commnetaire.Article_Titre = article.Titre
+GROUP BY article.Titre
+
+
+● Lister les articles qui n’ont pas de commentaire
+
+-
+
+SELECT article.Titre ,`Texte`,`Date`,`importance`,`FinDate`,`Auteur_Pseudo`
+FROM `article` 
+WHERE article.Titre NOT IN (SELECT commnetaire.Article_Titre
+FROM commnetaire)
+
+
+● Lister les auteurs qui ont rédigés des articles mais pas de commentaires
+
+-
+SELECT article.Auteur_Pseudo FROM `article` 
+WHERE article.Auteur_Pseudo 
+NOT IN (SELECT commnetaire.Auteur_Pseudo 
+        FROM `commnetaire`)
+
+
+##memo
+
+Syntaxe
+La syntaxe à utiliser pour utiliser l’opérateur LIKE est la suivante :
+
+SELECT *
+FROM table
+WHERE colonne LIKE modele
+Dans cet exemple le “modèle” n’a pas été défini, mais il ressemble très généralement à l’un des exemples suivants:
+
+LIKE ‘%a’ : le caractère “%” est un caractère joker qui remplace tous les autres caractères. Ainsi, ce modèle permet de rechercher toutes les chaines de caractère qui se termine par un “a”.
+LIKE ‘a%’ : ce modèle permet de rechercher toutes les lignes de “colonne” qui commence par un “a”.
+LIKE ‘%a%’ : ce modèle est utilisé pour rechercher tous les enregistrement qui utilisent le caractère “a”.
+LIKE ‘pa%on’ : ce modèle permet de rechercher les chaines qui commence par “pa” et qui se terminent par “on”, comme “pantalon” ou “pardon”.
+LIKE ‘a_c’ : peu utilisé, le caractère “_” (underscore) peut être remplacé par n’importe quel caractère, mais un seul caractère uniquement (alors que le symbole pourcentage “%” peut être remplacé par un nombre incalculable de caractères . Ainsi, ce modèle permet de retourner les lignes “aac”, “abc” ou même “azc”.
