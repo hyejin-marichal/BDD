@@ -1,0 +1,89 @@
+## Sélection sur une table :
+
+
+● Lister tous les articles
+
+-
+SELECT * FROM `article`
+
+
+● Lister les articles publiés depuis le « 01/01/2020 » qui ont une importance
+supérieur à 2
+
+-
+SELECT * FROM `article` WHERE `Date`> '2020-01-01' AND `importance` > 2
+
+
+● Lister les articles visibles aujourd’hui, par date de publication décroissante
+
+-
+SELECT * FROM `article` WHERE `FinDate`>= '2020-01-23' ORDER BY `Date` DESC
+
+
+## Sélection sur plusieurs tables:
+
+● Lister les articles avec le nom de leur catégorie
+
+-
+SELECT `Article_Titre`, `Category_Nom` FROM `article_has_category`
+
+
+● Lister tous les articles de la catégorie « Loisirs »
+
+-
+SELECT `Article_Titre`, `Category_Nom` FROM `article_has_category` WHERE `Category_Nom` = 'Loisir'
+
+● Compter les commentaires publiés par le pseudo « Matéo »
+
+-
+SELECT COUNT(*) FROM `commnetaire` WHERE `Auteur_Pseudo`='Matéo'
+
+
+● Lister les articles rédigés par le pseudo « Valentine » ou « Matéo » (afficher
+l’auteur)
+
+-
+SELECT `Titre`, `Auteur_Pseudo`FROM `article` WHERE `Auteur_Pseudo` = 'Matéo' OR `Auteur_Pseudo` ='Valentine'
+
+
+
+● Lister les articles visibles aujourd’hui avec le nom de la catégorie et le pseudo de
+l’auteur, par date de publication décroissante
+
+//
+INSERT INTO `article_has_category`(`Article_Titre`, `Category_Nom`) 
+VALUES('Dance', 'Loisir'), ('Sport','Jeu'),('Sport d''été','Jeu'),('Sport d''hiver','Jeu'),('Solde','Loisir')
+//
+
+- 
+SELECT article_has_category.Category_Nom,`Auteur_Pseudo`,`Date` FROM`article` INNER JOIN `article_has_category` ON article.Titre = article_has_category.Article_Titre WHERE article.`FinDate` >= '2020.01.23' ORDER BY `Date` DESC
+
+
+
+## Insertion et mise à jour et suppression de données
+
+
+● Ajouter un article avec comme catégorie « Loisirs » et l’auteur qui a le pseudo «
+Matéo »
+-
+INSERT INTO `article`(`Titre`, `Texte`, `Date`, `importance`, `FinDate`, `Auteur_Pseudo`) VALUES ('Yoga','yogayogayoga','2020-01-23','3','2020-01-30','Matéo');
+INSERT INTO `article_has_category`(`Article_Titre`,`Category_Nom`) VALUES ('Yoga','Loisir')
+
+
+● Renommer le pseudo « Valentine » par « Val »
+
+-
+changer les cles etranger -> cascade (Pseudo) <commenaire/ article)
+
+UPDATE `auteur` SET `Pseudo`= 'Val' WHERE `Pseudo` ='valentine'
+
+● Supprimer les commentaires qui n’ont que “Sans avis”
+
+-
+DELETE FROM `commnetaire` WHERE `Text` = 'Sans avis'
+
+● Supprimer l’auteur avec un pseudo « Matéo »
+
+-
+changer les cles etranger -> cascade (Pseudo) < article_has_category)
+DELETE FROM `auteur` WHERE `Pseudo` ='Matéo'
